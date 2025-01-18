@@ -345,7 +345,6 @@ export function StageVisualizer({ state, onStateChange }: StageProps) {
                 <p className="font-mono text-sm break-all">{state.finalHash}</p>
               </div>
               <Button
-                variant="primary"
                 className="w-full"
                 onClick={() => {
                   navigator.clipboard.writeText(state.finalHash);

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import bigInt from 'big-integer';
 import { AlertCircle, Lock, Unlock, RefreshCw, ChevronRight, ChevronLeft, Shield, ShieldAlert, ShieldCheck } from 'lucide-react';
 
 // Helper functions for RSA calculations
@@ -8,6 +9,21 @@ const isPrime = (num: number): boolean => {
   }
   return num > 1;
 };
+
+function modExp(base: string | number | bigint | boolean, exponent: string | number | bigint | boolean, modulus: string | number | bigint | boolean) {
+  base = BigInt(base);
+  exponent = BigInt(exponent);
+  modulus = BigInt(modulus);
+  let result = BigInt(1);
+  while (exponent > 0) {
+      if (exponent % BigInt(2) === BigInt(1)) {
+          result = (result * base) % modulus;
+      }
+      base = (base * base) % modulus;
+      exponent = exponent / BigInt(2);
+  }
+  return result;
+}
 
 const gcd = (a: number, b: number): number => {
   if (!b) return a;
@@ -92,7 +108,7 @@ const RSAVisualizer: React.FC = () => {
     setIsAnimating(true);
     const encrypted = message.split('').map(char => {
       const m = char.charCodeAt(0);
-      return BigInt(m) ** BigInt(e) % BigInt(n);
+      return modExp(m, e, n);
     });
     setEncrypted(encrypted.map(Number));
     setTimeout(() => setIsAnimating(false), 1000);
@@ -101,7 +117,7 @@ const RSAVisualizer: React.FC = () => {
   const decrypt = () => {
     setIsAnimating(true);
     const decrypted = encrypted.map(c => {
-      const m = BigInt(c) ** BigInt(d) % BigInt(n);
+      const m = modExp(c, d, n);
       return String.fromCharCode(Number(m));
     }).join('');
     setDecrypted(decrypted);
