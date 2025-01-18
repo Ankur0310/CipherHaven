@@ -36,7 +36,7 @@ const ReplayAttackSimulation = () => {
 
   const attemptReplay = (message: Message) => {
     const session = sessions.find((s) => s.key === message.sessionKey);
-    const success = session && !session.isExpired;
+    const success = session ? !session.isExpired : false;
 
     setReplayAttempts((prev) => [
       ...prev,
